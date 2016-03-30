@@ -4,9 +4,17 @@ import argparse
 import os
 import numpy
 import sys
- 
+import glob
+
+imgpaths = []
+for imgpath in sys.argv[1:]:
+  if '*' in imgpath:
+    imgpaths.extend(glob.glob(imgpath))
+  else:
+    imgpaths.append(imgpath)
+
 os.mkdir("resized")
-for imgpath in sys.argv: 
+for imgpath in imgpaths:
   target_shape = (256, 256)
   print imgpath
   if imgpath.find('.jpg') == -1:
@@ -27,4 +35,4 @@ for imgpath in sys.argv:
   cropped_img = resized_img[height_offset:height_offset + output_side_length,
   width_offset:width_offset + output_side_length]
   print "write"
-  cv2.imwrite("resized/"+imgpath, cropped_img) 
+  cv2.imwrite(os.path.join("resized", imgpath), cropped_img)

@@ -11,6 +11,8 @@ Describe deep neural network, training and using in simple syntax.
 
 ## Install and test
 
+### Linux, Mac, ...
+
 ```sh
 $ git clone https://github.com/uei/deel.git
 $ cd deel/data
@@ -21,9 +23,21 @@ $ cd ..
 $ python test.py
 ```
 
-###Examples
+### Windows
 
-####CNN classifier (done)
+```sh
+> git clone https://github.com/uei/deel.git
+> cd deel\data
+> .\getCaltech101.bat
+> cd ..\misc
+> .\getCaffeNet.bat
+> cd ..
+> python test.py
+```
+
+## Examples
+
+### CNN classifier (done)
 ```python
 deel = Deel()
 
@@ -35,7 +49,7 @@ ShowLabels()
 
 ```
 
-####CNN trainer (almost done,not testing with GPU)
+### CNN trainer (almost done,not testing with GPU)
 ```python
 nin = NetworkInNetwork()
 
@@ -49,7 +63,7 @@ def workout(x,t):
 BatchTrain(workout)
 ```
 
-####CNN-LSTM trainer (done, not test)
+### CNN-LSTM trainer (done, not test)
 ```python
 InputBatch(train="data/train_lstm.tsv")
 
@@ -64,7 +78,7 @@ def trainer(x,t):
 BatchTrain(trainer)
 ```
 
-####CNN-DQN with Unity (not yet)
+### CNN-DQN with Unity (not yet)
 ```python
 CNN = GoogLeNet()
 DQN = DeepQLearning(output=4)
