@@ -28,10 +28,11 @@ $ python test.py
 
 ```sh
 > git clone https://github.com/uei/deel.git
+> rem pip install -r requirements.txt
 > cd deel\data
-> .\getCaltech101.bat
+> .\getCaltech101.cmd
 > cd ..\misc
-> .\getCaffeNet.bat
+> .\getCaffeNet.cmd
 > cd ..
 > python test.py
 ```
