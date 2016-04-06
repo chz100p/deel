@@ -18,7 +18,6 @@ from PIL import Image
 #import six.moves.cPickle as pickle
 from six.moves import queue
 import pickle
-import cv2
 import hashlib
 import datetime
 import sys
@@ -39,11 +38,11 @@ class Deel(object):
 	trainCount=0
 	lstm_train=None
 	def __init__(self,gpu=-1):
-		self.singleton = self
-		self.gpu=gpu
+		Deel.singleton = self
+		Deel.gpu=gpu
 		if gpu>=0:
 			cuda.get_device(gpu).use()
-			self.xp = cuda.cupy if gpu >= 0 else np
+			Deel.xp = cuda.cupy if gpu >= 0 else np
 
 	@staticmethod
 	def getInstance():

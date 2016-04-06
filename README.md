@@ -1,7 +1,7 @@
 # Deel
 Deel; A High level deep neural network description language.
 
-***Now Under construction***
+You can create your own deep neural network application in a second.
 
 ![logo](deel.png)
 
@@ -15,10 +15,11 @@ Describe deep neural network, training and using in simple syntax.
 
 ```sh
 $ git clone https://github.com/uei/deel.git
+$ pip install -r requirements.txt
 $ cd deel/data
 $ ./getCaltech101.sh
 $ cd ../misc
-$ ./getCaffeNet.sh
+$ ./getPretrainedModels.sh
 $ cd ..
 $ python test.py
 ```
@@ -35,9 +36,9 @@ $ python test.py
 > python test.py
 ```
 
-## Examples
+###Examples
 
-### CNN classifier (done)
+####CNN classifier 
 ```python
 deel = Deel()
 
@@ -49,7 +50,7 @@ ShowLabels()
 
 ```
 
-### CNN trainer (almost done,not testing with GPU)
+####CNN trainer 
 ```python
 nin = NetworkInNetwork()
 
@@ -63,7 +64,60 @@ def workout(x,t):
 BatchTrain(workout)
 ```
 
-### CNN-LSTM trainer (done, not test)
+####CNN classifier with OpenCV camera (you need OpenCV2) 
+```python
+import cv2 
+from deel import *
+from deel.network import *
+from deel.commands import *
+
+deel = Deel()
+
+CNN = GoogLeNet()
+
+cam = cv2.VideoCapture(0)  
+
+while True:
+	ret, img = cam.read()  
+	CNN.Input(img)
+	CNN.classify()
+
+	labels = GetLabels()
+	if labels[0][1] == 'Band':
+		print 'BAND'
+		cv2.imwrite('band.png',img)
+
+	cv2.imshow('cam', img)
+	if cv2.waitKey(10) > 0:
+		break
+cam.release()
+cv2.destroyAllWindows()
+
+```
+
+
+
+####CNN-DQN with Unity (using with https://github.com/wbap/ml-agent-for-unity)
+```python
+from deel import *
+from deel.network import *
+from deel.commands import *
+from deel.agentServer import *
+
+deel = Deel()
+
+CNN = AlexNet()
+QNET = DQN()
+
+def trainer(x):
+	CNN.feature(x)
+	return QNET.actionAndLearn()
+
+StartAgent(trainer)
+```
+
+
+####CNN-LSTM trainer (done, not test)
 ```python
 InputBatch(train="data/train_lstm.tsv")
 
@@ -76,24 +130,5 @@ def trainer(x,t):
 	return RNN.backprop()
 
 BatchTrain(trainer)
-```
-
-### CNN-DQN with Unity (not yet)
-```python
-CNN = GoogLeNet()
-DQN = DeepQLearning(output=4)
-
-def trainer():
-	#Realtime input image from Unity
-	InputUnity('unity.png') 
-	CNN.classify() 
-	DQN.forward()
-    OutputUnity( { 0:'left, 1:'right, 2:'up', 3:'down', 4:'space'})
-
-	#Get score or loss from Unity game
-	t = InputVarsFromUnity()
-	DQN.reinforcement(t)
-
-StreamTrain(workout)
 ```
 

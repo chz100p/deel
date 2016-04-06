@@ -15,7 +15,6 @@ import os.path
 from PIL import Image
 from six.moves import queue
 import pickle
-import cv2
 import hashlib
 import datetime
 import sys
@@ -52,7 +51,7 @@ class ImageTensor(Tensor):
 		self.content = x
 		
 		if filtered_image is None:
-			filtered_image=np.asarray(x)
+			filtered_image=_x
 		image = filtered_image
 		
 
@@ -76,6 +75,9 @@ class ChainerTensor(Tensor):
 				x.data,
 				comment=comment)
 		self.content = x
+	def __del__(self):
+		del self.value
+		del self.content
 
 class LabelTensor(Tensor):
 	def __init__(	self,x,comment=''):
