@@ -1,6 +1,5 @@
 if exist "101_ObjectCategories\" rmdir /S /Q "101_ObjectCategories\"
 if exist "images\" rmdir /S /Q "images\"
-if exist "labels.txt" del "labels.txt"
 if exist "test.txt" del "test.txt"
 if exist "train.txt" del "train.txt"
 if exist "train_lstm.tsv" del "train_lstm.tsv"
