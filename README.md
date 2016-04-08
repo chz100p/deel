@@ -38,7 +38,7 @@ $ python test.py
 > cd deel\data
 > .\getCaltech101.cmd
 > cd ..\misc
-> .\getCaffeNet.cmd
+> .\getPretrainedModels.cmd
 > cd ..
 > python test.py
 ```
