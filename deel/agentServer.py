@@ -6,6 +6,9 @@ import msgpack
 import io
 from PIL import Image
 import threading
+from tensor import *
+import numpy as np
+from chainer import Variable, FunctionSet, optimizers
 
 
 class Root(object):
@@ -19,6 +22,28 @@ class Root(object):
 		handler = cherrypy.request.ws_handler
 
 workout= None
+depth_image=None
+
+Depth_dim=32*32*3
+
+def DepthImage():
+	return Tensor(value=np.asarray(depth_image).reshape(Depth_dim))
+
+
+def Concat(y,x=None):
+	if x is None:
+		x = Tensor.context
+	#print x.value.mean()
+	#print y.value.sum()
+	dat = np.r_[x.value,y.value];
+	#print dat.sum();
+	x = Variable(dat, volatile=True)
+	t = ChainerTensor(x	)
+	t.use()
+	return t
+
+
+
 class AgentServer(WebSocket):
 	agent_initialized = False
 	cycle_counter = 0
@@ -30,20 +55,21 @@ class AgentServer(WebSocket):
 	reward_sum = 0
 
 	def received_message(self, m):
+		global depth_image
 		payload = m.data
 
 		dat = msgpack.unpackb(payload)
 		screen = Image.open(io.BytesIO(bytearray(dat['image'])))
 		x = screen
-		AgentServer.reward = dat['reward']
+		reward = dat['reward']
 		end_episode = dat['endEpisode']
+
+		depth_image = Image.open(io.BytesIO(bytearray(dat['depth'])))
 
 		if not self.agent_initialized:
 			self.agent_initialized = True
-			#self.agent.agent_init(Deel.gpu)
 
 			AgentServer.mode='start'
-			#action = self.agent.agent_start(image)
 			action = workout(x)
 			self.send(str(action))
 			with open(self.log_file, 'w') as the_file:
@@ -51,7 +77,7 @@ class AgentServer(WebSocket):
 		else:
 			self.thread_event.wait()
 			self.cycle_counter += 1
-			self.reward_sum += AgentServer.reward
+			self.reward_sum += reward
 
 			if end_episode:
 				AgentServer.mode='end'
@@ -72,7 +98,7 @@ class AgentServer(WebSocket):
 				AgentServer.mode='step'
 				ag,action, eps, Q_now, obs_array = workout(x)
 				self.send(str(action))
-				ag.step_after(AgentServer.reward, action, eps, Q_now, obs_array)
+				ag.step_after(reward, action, eps, Q_now, obs_array)
 
 		self.thread_event.set()
 
